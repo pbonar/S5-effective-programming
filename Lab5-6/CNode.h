@@ -11,7 +11,8 @@ static const string REPAIR_VALUE = "1";
 
 class CNode {
 private:
-    bool is_number;
+    int type;
+    // 0 - expression, 1 - number, 2 - variable
     string value;
     CNode* left;
     CNode* right;
@@ -23,7 +24,7 @@ public:
     void setRight(CNode* rightNode);
     string toString();
 
-    bool getIfNumber() const;
+    bool getType() const;
     string getValue() const;
     CNode* getLeft() const;
     CNode* getRight() const;

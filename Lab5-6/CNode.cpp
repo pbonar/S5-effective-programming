@@ -3,26 +3,27 @@
 
 CNode::CNode(string value) : value(value), left(nullptr), right(nullptr) {
     bool is_done = false;
-    cout << "Started creating new node" << endl;
     for (int i = 0; i < VALID_EXPRESSION_ARRAY_LENGTH; i++) {
         if (VALID_EXPRESSION_ARRAY[i] == value) {
             type = 0;
             is_done = true;
-            cout << "Its a expression: " << value << endl;
             return;
         }
     }
     if (!is_done) {
         for (int i = 0; i < value.length(); i++) {
-            cout << value.at(i) << " " << !isdigit(value.at(i)) << " " << value.length() << endl;;
+            // cout << value.at(i) << " " << !isdigit(value.at(i)) << " " << value.length() << endl;;
             if (!isdigit(value.at(i))) {
-                cout << "Its a variable: " << value << endl;
                 type = 2;
+                if (!value.empty() && isalpha(value[0])) {
+                } else {
+                    cout << "Value had to be repaired because of disallowed string" << endl;
+                    value = REPAIR_VALUE;
+                }
                 return;
             }
         }
         type = 1;;
-        cout << "Its a value: " << value << endl;
     }
 }
 
@@ -61,4 +62,31 @@ string CNode::toString() {
     if (left != nullptr) to_return += " " + left->toString();
     if (right != nullptr) to_return += " " + right->toString();
     return to_return;
+}
+
+bool CNode::addChild(CNode* child) {
+    if (type == 0) {
+        if (left == nullptr) {
+            left = child;
+            return true;
+        }
+        else if (right == nullptr && value != "sin" && value != "cos") {
+            right = child;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+}
+
+bool CNode::isFull() {
+    if (type == 0) {
+        return right != nullptr && left != nullptr;
+    }
+    else {
+        return true;
+    }
 }

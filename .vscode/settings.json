@@ -9,6 +9,8 @@
         "ostream": "cpp",
         "streambuf": "cpp",
         "string": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "stack": "cpp",
+        "vector": "cpp"
     }
 }

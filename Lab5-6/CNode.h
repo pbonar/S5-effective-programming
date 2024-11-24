@@ -22,12 +22,14 @@ public:
 
     void setLeft(CNode* leftNode);
     void setRight(CNode* rightNode);
+    bool addChild(CNode* child);
     string toString();
 
     bool getType() const;
+    bool isFull();
     string getValue() const;
     CNode* getLeft() const;
-    CNode* getRight() const;
+    CNode* getRight() const;  
 };
 
 #endif

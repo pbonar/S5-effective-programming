@@ -167,3 +167,45 @@ void CTree::join(string formula) {
     cout << "Modified tree: ";
     printTree();
 }
+
+CNode* CTree::findLeafNodeParent(CNode* node) {
+    CNode* current = node;
+    while (current->getType() != 1 && current->getLeft()->getLeft() != nullptr) {
+        current = current->getLeft();
+        if (current == nullptr) {
+            return nullptr;
+        }
+    }
+    return current;
+}
+
+void CTree::replaceLeafWithRoot(CNode* leaf_node, CNode* new_root) {
+    if (new_root != nullptr)
+        leaf_node->setLeft(new_root);
+    else cout << "Error: unable to join a nullptr"<<endl;
+}
+
+CTree CTree::operator+(const CTree& other) {
+    CTree result(*this);
+    CNode* leafNode = findLeafNodeParent(result.root);
+    if (leafNode) {
+        CNode* copiedRoot = new CNode(*other.root);
+        result.replaceLeafWithRoot(leafNode, copiedRoot);
+    } else {
+        cout << "Error: No leaf node found in Tree A for substitution.\n";
+    }
+    return result;
+    }
+    
+CTree* CTree::operator=(const CTree& other) {
+    if (this != &other) { 
+        delete root;
+        if (other.root) {
+            root = new CNode(*other.root);
+        } 
+        else {
+            root = NULL;
+        }
+    }
+    return this; 
+}

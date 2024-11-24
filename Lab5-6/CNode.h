@@ -22,6 +22,8 @@ public:
 
     void setLeft(CNode* leftNode);
     void setRight(CNode* rightNode);
+    void setValue(string new_value);
+    void setType(int new_type); 
     bool addChild(CNode* child);
     string toString();
 

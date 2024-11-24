@@ -32,6 +32,10 @@ public:
     double compute(const vector<double>& values) const;
     void vars();
     void join(string formula);
+    CTree operator+(const CTree& other);
+    CTree* operator=(const CTree& other);
+    CNode* findLeafNodeParent(CNode* node);
+    void replaceLeafWithRoot(CNode* leafNode, CNode* newRoot);
 };
 
 #endif

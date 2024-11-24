@@ -41,6 +41,14 @@ void CNode::setRight(CNode* rightNode) {
         cout << "cant add a child to a number " << value << endl;
 }
 
+void CNode::setValue(string new_value) {
+    value = new_value;   
+}
+
+void CNode::setType(int new_type) {
+    type = new_type;   
+}
+
 string CNode::getValue() const {
     return value;
 }

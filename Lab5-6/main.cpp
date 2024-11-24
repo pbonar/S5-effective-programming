@@ -9,18 +9,21 @@ int main() {
     // Przykład formuły: "* + x y x"
     // Ta formuła oznacza (x + y) * x
 
-    string formula = "+ * 5 y x";
+    cout << "Testy przykladowe:" << endl;
+    string formula = "+ / sin x y 3";
     CNode n("a");
     // Tworzymy drzewo z formuły
     CTree tree(formula);
 
     // Wyświetlamy drzewo (w formie preorder)
     vector<double> values;
-    values.push_back(5);  // x = 5
+    values.push_back(6);  // x = 5
     values.push_back(3);  // y = 3
     tree.vars();
     double result = tree.compute(values);
-
+    CTree tree2(formula);
+    CTree tree4 = tree + tree2;
+    tree4.printTree();
     cout << "Wynik obliczenia: " << result << endl;
 
     return 0;

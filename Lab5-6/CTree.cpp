@@ -119,8 +119,14 @@ double CTree::computeHelper(CNode* node, const vector<double>& values) const {
 
     // Jeśli to zmienna
     if (isVariable(value)) {
-        if (value == "x") return values[0];
-        if (value == "y") return values[1];
+        // Szukamy zmiennej w wektorze 'variables'
+        vector<string>::const_iterator it = find(variables.begin(), variables.end(), value);
+        if (it != variables.end()) {
+            // Jeśli zmienna została znaleziona, pobieramy jej wartość z 'values'
+            size_t index = distance(variables.begin(), it);
+            return values[index];
+        }
+        // Jeśli zmienna nie została znaleziona, zwracamy 0 (lub można rzucić wyjątek)
         return 0;
     }
 
@@ -163,41 +169,89 @@ void CTree::join(string formula) {
         cout << "Tree B is empty, nothing to join.\n";
         return;
     }
-    // *this = *this + newTree;
+    *this = *this + newTree;
     cout << "Modified tree: ";
     printTree();
 }
 
-CNode* CTree::findLeafNodeParent(CNode* node) {
-    CNode* current = node;
-    while (current->getType() != 1 && current->getLeft()->getLeft() != nullptr) {
-        current = current->getLeft();
-        if (current == nullptr) {
-            return nullptr;
+CNode* CTree::copyTree(CNode* node) const {
+    if (!node) return nullptr;
+
+    CNode* newNode = new CNode(node->getValue());
+    newNode->setType(node->getType());
+    newNode->setLeft(copyTree(node->getLeft()));
+    newNode->setRight(copyTree(node->getRight()));
+
+    return newNode;
+}
+
+    CNode* CTree::findLeafNode(CNode* node) const {
+        if (!node) return nullptr;
+
+        if (!node->getLeft() && !node->getRight()) {
+            return node;
+        }
+
+        CNode* leaf1 = findLeafNode(node->getRight());
+        if (leaf1) return leaf1;
+        CNode* leaf2 = findLeafNode(node->getLeft());
+        if (leaf2) return leaf2;
+
+        return nullptr;
+    }
+
+    void CTree::replaceLeafNodeWithRoot(CNode* leafNode, CNode* newRoot) {
+
+        if(leafNode == root)
+        {
+            delete root;
+            root = newRoot;
+            return;
+        }
+
+        CNode* parent = findParent(root, leafNode);
+        if (!parent) {
+            return;
+        }
+
+        if (parent->getLeft() == leafNode) {
+            parent->setLeft(newRoot);
+        } else {
+            parent->setRight(newRoot);
+        }
+        return;
+    }
+
+    CNode* CTree::findParent(CNode* parent, CNode* childNode) const {
+        if (!parent) return nullptr;
+
+        if (parent->getLeft() == childNode || parent->getRight()) {
+            return parent;
+        } else {
+            CNode* left_parent = findParent(parent->getLeft(), childNode);
+            CNode* right_parent = findParent(parent->getRight(), childNode);
+            if (left_parent) return left_parent;
+            else if (right_parent) return right_parent;
+            else return nullptr;
         }
     }
-    return current;
-}
 
-void CTree::replaceLeafWithRoot(CNode* leaf_node, CNode* new_root) {
-    if (new_root != nullptr)
-        leaf_node->setLeft(new_root);
-    else cout << "Error: unable to join a nullptr"<<endl;
-}
+CTree CTree::operator+(const CTree& other) const {
+    CTree result;
+    result.root = copyTree(root);
 
-CTree CTree::operator+(const CTree& other) {
-    CTree result(*this);
-    CNode* leafNode = findLeafNodeParent(result.root);
+    CNode* leafNode = result.findLeafNode(result.root);
     if (leafNode) {
-        CNode* copiedRoot = new CNode(*other.root);
-        result.replaceLeafWithRoot(leafNode, copiedRoot);
+        CNode* copiedRoot = copyTree(other.root);
+        result.replaceLeafNodeWithRoot(leafNode, copiedRoot);
     } else {
         cout << "Error: No leaf node found in Tree A for substitution.\n";
     }
+
     return result;
-    }
-    
-CTree* CTree::operator=(const CTree& other) {
+}
+
+CTree& CTree::operator=(const CTree& other) {
     if (this != &other) { 
         delete root;
         if (other.root) {
@@ -207,5 +261,5 @@ CTree* CTree::operator=(const CTree& other) {
             root = NULL;
         }
     }
-    return this; 
+    return *this; 
 }

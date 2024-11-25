@@ -25,10 +25,11 @@ public:
     void setValue(string new_value);
     void setType(int new_type); 
     bool addChild(CNode* child);
-    string toString();
 
-    bool getType() const;
+    string toString();
     bool isFull();
+    
+    int getType() const;
     string getValue() const;
     CNode* getLeft() const;
     CNode* getRight() const;  

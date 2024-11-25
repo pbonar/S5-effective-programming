@@ -30,15 +30,11 @@ CNode::CNode(string value) : value(value), left(nullptr), right(nullptr) {
 void CNode::setLeft(CNode* leftNode) {
     if (type == 0)
         left = leftNode;
-    else 
-        cout << "cant add a child to a number " << value << endl;
 }
 
 void CNode::setRight(CNode* rightNode) {
     if (type == 0)
         right = rightNode;
-    else 
-        cout << "cant add a child to a number " << value << endl;
 }
 
 void CNode::setValue(string new_value) {
@@ -61,7 +57,7 @@ CNode* CNode::getRight() const {
     return right;
 }
 
-bool CNode::getType() const {
+int CNode::getType() const {
     return type;
 }
 

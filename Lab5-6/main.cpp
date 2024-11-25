@@ -10,7 +10,7 @@ int main() {
     // Ta formuła oznacza (x + y) * x
 
     cout << "Testy przykladowe:" << endl;
-    string formula = "+ / sin x y 3";
+    string formula = "+ / x y 3";
     CNode n("a");
     // Tworzymy drzewo z formuły
     CTree tree(formula);

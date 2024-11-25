@@ -230,6 +230,7 @@ CNode* CTree::copyTree(CNode* node) const {
 CTree CTree::operator+(const CTree& other) const {
     CTree result;
     result.root = copyTree(root);
+    result.variables.insert(result.variables.end(), other.variables.begin(), other.variables.end());
 
     CNode* leafNode = result.findLeafNode(result.root);
     if (leafNode) {

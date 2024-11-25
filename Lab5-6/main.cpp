@@ -2,16 +2,16 @@
 #include <vector>
 #include "CTree.h"
 #include "CNode.h"
+#include "CParser.h"
 
 using namespace std;
 
 int main() {
     // Przykład formuły: "* + x y x"
-    // Ta formuła oznacza (x + y) * x
-
     cout << "Testy przykladowe:" << endl;
     string formula = "+ / x y z";
     CNode n("a");
+
     // Tworzymy drzewo z formuły
     CTree tree(formula);
 
@@ -26,5 +26,7 @@ int main() {
     tree4.printTree();
     cout << "Wynik obliczenia: " << result << endl;
 
+    CParser parser;
+    parser.processCommands();
     return 0;
 }

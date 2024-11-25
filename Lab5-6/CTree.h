@@ -16,7 +16,6 @@ private:
     bool isNumber(const string& s) const;
     bool isVariable(const string& s) const;
 
-    void enter(string formula);
     void printPreorder(CNode* node) const;
     double computeHelper(CNode* node, const vector<double>& values) const;
     CNode* copyTree(CNode* node) const;
@@ -32,9 +31,12 @@ public:
     ~CTree();
 
     void printTree() const;
+
+    void enter(string formula);
     double compute(const vector<double>& values) const;
     void vars();
     void join(string formula);
+
     CTree operator+(const CTree& other) const;
     CTree& operator=(const CTree& other);
 };

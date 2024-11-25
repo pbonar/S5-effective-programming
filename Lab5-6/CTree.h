@@ -19,8 +19,8 @@ private:
     void printPreorder(CNode* node) const;
     double computeHelper(CNode* node, const vector<double>& values) const;
     CNode* copyTree(CNode* node) const;
-    CNode* findLeafNode(CNode* node) const;
-    void replaceLeafNodeWithRoot(CNode* leafNode, CNode* newRoot);
+    CNode* findLeaf(CNode* node) const;
+    void replaceLeafWithRoot(CNode* leafNode, CNode* newRoot);
     CNode* findParent(CNode* parent, CNode* childNode) const;
 
     void deleteTree(CNode* node);

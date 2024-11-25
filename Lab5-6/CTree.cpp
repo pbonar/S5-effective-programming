@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include <algorithm>
 #include "CTree.h"
 #include "CNode.h"
 
@@ -32,11 +33,8 @@ bool CTree::isOperator(const string& s) const {
 }
 
 bool CTree::isNumber(const string& s) const {
-    for (string::size_type i = 0; i < s.length(); ++i) {
-        char c = s[i];
-        if (!isdigit(c) && c != '.') {
-            return false;
-        }
+    for (size_t i = 0; i < s.size(); ++i) {
+        if (!isdigit(s[i]) && s[i] != '.') return false;
     }
     return true;
 }
@@ -49,44 +47,46 @@ void CTree::enter(string formula) {
     stringstream ss(formula);
     stack<CNode*> nodeStack;
     string token;
+
     ss >> token;
     root = new CNode(token);
-
+    variables.clear();
     nodeStack.push(root);
 
     while (ss >> token) {
         CNode* node = new CNode(token);
 
-        while (nodeStack.size() != 0 && !nodeStack.top()->addChild(node)) {
+        while (!nodeStack.empty() && !nodeStack.top()->addChild(node)) {
             nodeStack.pop();
         }
-        
-        if (nodeStack.size() == 0) {
-            cout << "We had to end earlier because of the fact that formula was too long. New formula:   ";
+
+        if (nodeStack.empty()) {
+            cout << "Formula too long. Resulting tree: ";
             printPreorder(root);
             cout << endl;
             return;
         }
-        
+
         if (isVariable(token)) {
             if (find(variables.begin(), variables.end(), token) == variables.end()) {
                 variables.push_back(token);
             }
-        }        
-        
+        }
+
         nodeStack.push(node);
     }
 
-    while (nodeStack.size() != 0) {
-        while (!nodeStack.top()->isFull())
+    while (!nodeStack.empty()) {
+        while (!nodeStack.top()->isFull()) {
             nodeStack.top()->addChild(new CNode("1"));
+        }
         nodeStack.pop();
     }
-    cout << "Final equasion: ";
+
+    cout << "Final equation: ";
     printPreorder(root);
     cout << endl;
 }
-
 
 void CTree::printTree() const {
     printPreorder(root);
@@ -102,12 +102,14 @@ void CTree::printPreorder(CNode* node) const {
 }
 
 double CTree::compute(const vector<double>& values) const {
+    if (values.size() > variables.size()) cout << "Too many values. Few arent going to be used."<< endl;
+    else if (values.size() < variables.size()) cout << "To little values. The missing ones will be replaced by 1." << endl;
     return computeHelper(root, values);
 }
 
 double CTree::computeHelper(CNode* node, const vector<double>& values) const {
-    if (node == nullptr) return 0;
-    
+    if (!node) return 0;
+
     string value = node->getValue();
 
     if (isNumber(value)) return stod(value);
@@ -118,32 +120,26 @@ double CTree::computeHelper(CNode* node, const vector<double>& values) const {
             size_t index = distance(variables.begin(), it);
             return values[index];
         }
-        else return stod(REPAIR_VALUE);
+        return 1;
     }
 
-    if (value == "+") {
-        return computeHelper(node->getLeft(), values) + computeHelper(node->getRight(), values);
-    } else if (value == "-") {
-        return computeHelper(node->getLeft(), values) - computeHelper(node->getRight(), values);
-    } else if (value == "*") {
-        return computeHelper(node->getLeft(), values) * computeHelper(node->getRight(), values);
-    } else if (value == "/") {
-        return computeHelper(node->getLeft(), values) / computeHelper(node->getRight(), values);
-    } else if (value == "sin") {
-        return sin(computeHelper(node->getLeft(), values));
-    } else if (value == "cos") {
-        return cos(computeHelper(node->getLeft(), values));
-    }
-    return 0;
+    if (value == "+") return computeHelper(node->getLeft(), values) + computeHelper(node->getRight(), values);
+    if (value == "-") return computeHelper(node->getLeft(), values) - computeHelper(node->getRight(), values);
+    if (value == "*") return computeHelper(node->getLeft(), values) * computeHelper(node->getRight(), values);
+    if (value == "/") return computeHelper(node->getLeft(), values) / computeHelper(node->getRight(), values);
+    if (value == "sin") return sin(computeHelper(node->getLeft(), values));
+    if (value == "cos") return cos(computeHelper(node->getLeft(), values));
+
+    return 1;
 }
 
 void CTree::vars() {
-    if (variables.size() == 0) {
+    if (variables.empty()) {
         cout << "No variables\n";
         return;
     }
     cout << "Variables: ";
-    for (int i = 0; i < variables.size(); i++) {
+    for (size_t i = 0; i < variables.size(); ++i) {
         cout << variables[i] << " ";
     }
     cout << endl;
@@ -151,17 +147,24 @@ void CTree::vars() {
 
 void CTree::join(string formula) {
     CTree newTree(formula);
-    if (root == nullptr) {
-        cout << "Tree A is empty, nothing to join with Tree B.\n";
+    if (!root) {
+        cout << "First tree is empty, no leafes to connect.\n";
         return;
     }
-    if (newTree.root == nullptr) {
-        cout << "Tree B is empty, nothing to join.\n";
+    if (!newTree.root) {
+        cout << "Second tree is empty, no leafes to join.\n";
         return;
     }
+
     CTree new_ctree = *this + newTree;
-    root = new_ctree.root;
-    cout << "Modified tree: ";
+
+    if (!new_ctree.root) {
+        cout << "Failed to join trees.\n";
+        return;
+    }
+
+    *this = new_ctree;
+    cout << "Modified equasion: ";
     printTree();
 }
 
@@ -176,82 +179,81 @@ CNode* CTree::copyTree(CNode* node) const {
     return newNode;
 }
 
-    CNode* CTree::findLeafNode(CNode* node) const {
-        if (!node) return nullptr;
+CNode* CTree::findLeaf(CNode* node) const {
+    if (!node) return nullptr;
 
-        if (!node->getLeft() && !node->getRight()) {
-            return node;
-        }
-
-        CNode* leaf1 = findLeafNode(node->getRight());
-        if (leaf1) return leaf1;
-        CNode* leaf2 = findLeafNode(node->getLeft());
-        if (leaf2) return leaf2;
-
-        return nullptr;
+    if (!node->getLeft() && !node->getRight()) {
+        return node;
     }
 
-    void CTree::replaceLeafNodeWithRoot(CNode* leafNode, CNode* newRoot) {
+    CNode* leaf1 = findLeaf(node->getRight());
+    if (leaf1) return leaf1;
+    return findLeaf(node->getLeft());
+}
 
-        if(leafNode == root)
-        {
-            delete root;
-            root = newRoot;
-            return;
-        }
-
-        CNode* parent = findParent(root, leafNode);
-        if (!parent) {
-            return;
-        }
-
-        if (parent->getLeft() == leafNode) {
-            parent->setLeft(newRoot);
-        } else {
-            parent->setRight(newRoot);
-        }
+void CTree::replaceLeafWithRoot(CNode* leafNode, CNode* newRoot) {
+    if (leafNode == root) {
+        deleteTree(root);
+        root = newRoot;
         return;
     }
 
-    CNode* CTree::findParent(CNode* parent, CNode* childNode) const {
-        if (!parent) return nullptr;
-
-        if (parent->getLeft() == childNode || parent->getRight()) {
-            return parent;
-        } else {
-            CNode* left_parent = findParent(parent->getLeft(), childNode);
-            CNode* right_parent = findParent(parent->getRight(), childNode);
-            if (left_parent) return left_parent;
-            else if (right_parent) return right_parent;
-            else return nullptr;
-        }
+    CNode* parent = findParent(root, leafNode);
+    if (!parent) {
+        cout << "Cant find the leafs parrent\n";
+        return;
     }
+
+    if (parent->getLeft() == leafNode) {
+        parent->setLeft(newRoot);
+    } else {
+        parent->setRight(newRoot);
+    }
+}
+
+CNode* CTree::findParent(CNode* parent, CNode* childNode) const {
+    if (!parent) return nullptr;
+
+    if (parent->getLeft() == childNode || parent->getRight() == childNode) {
+        return parent;
+    }
+
+    CNode* left_parent = findParent(parent->getLeft(), childNode);
+    if (left_parent) return left_parent;
+
+    return findParent(parent->getRight(), childNode);
+}
 
 CTree CTree::operator+(const CTree& other) const {
     CTree result;
     result.root = copyTree(root);
-    result.variables.insert(result.variables.end(), other.variables.begin(), other.variables.end());
 
-    CNode* leafNode = result.findLeafNode(result.root);
+    result.variables.insert(result.variables.end(), variables.begin(), variables.end());
+
+    CNode* leafNode = result.findLeaf(result.root);
     if (leafNode) {
         CNode* copiedRoot = copyTree(other.root);
-        result.replaceLeafNodeWithRoot(leafNode, copiedRoot);
+        result.replaceLeafWithRoot(leafNode, copiedRoot);
+        if (leafNode->getType() == 2) {
+            result.variables.erase(remove(result.variables.begin(), result.variables.end(), leafNode->getValue()), result.variables.end());
+        }
     } else {
-        cout << "Error: No leaf node found in Tree A for substitution.\n";
+        cout << "No leaf node found" << endl;
     }
+
+    result.variables.insert(result.variables.end(), other.variables.begin(), other.variables.end());
+
+    sort(result.variables.begin(), result.variables.end());
+    result.variables.erase(unique(result.variables.begin(), result.variables.end()), result.variables.end());
 
     return result;
 }
 
 CTree& CTree::operator=(const CTree& other) {
-    if (this != &other) { 
-        delete root;
-        if (other.root) {
-            root = new CNode(*other.root);
-        } 
-        else {
-            root = NULL;
-        }
+    if (this != &other) {
+        deleteTree(root);
+        root = copyTree(other.root);
+        variables = other.variables;
     }
-    return *this; 
+    return *this;
 }

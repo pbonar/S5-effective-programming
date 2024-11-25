@@ -6,7 +6,6 @@
 using namespace std;
 
 void trim(string &s) {
-    // Helper function to trim leading and trailing spaces
     size_t start = s.find_first_not_of(" ");
     size_t end = s.find_last_not_of(" ");
     if (start != string::npos && end != string::npos) {
@@ -19,7 +18,7 @@ void trim(string &s) {
 void CParser::processCommands() {
     string line;
     while (true) {
-        cout << ">>> ";
+        cout << "> ";
         getline(cin, line);
         if (line.empty()) continue;
 
@@ -37,27 +36,22 @@ void CParser::processCommands() {
             tree.vars();
         } 
         else if (command == "print") {
-            tree.printTree(); // Correct method name
+            tree.printTree();
         } 
         else if (command == "comp") {
             string values;
             getline(stream, values);
             trim(values);
 
-            // Parse values into vector<double>
             vector<double> nums;
             istringstream valStream(values);
             string num;
             while (valStream >> num) {
-                nums.push_back(stod(num)); // Convert string to double
+                nums.push_back(stod(num));
             }
+            double result = tree.compute(nums);
+            cout << "Result: " << result << "\n";
 
-            try {
-                double result = tree.compute(nums);
-                cout << "Result: " << result << "\n";
-            } catch (const exception &e) {
-                cerr << "Error during computation: " << e.what() << "\n";
-            }
         } 
         else if (command == "join") {
             string formula;
@@ -65,8 +59,8 @@ void CParser::processCommands() {
             trim(formula);
             tree.join(formula);
         } 
-        else if (command == "exit") {
-            cout << "Exiting...\n";
+        else if (command == "exit" || command == "quit" || command == "close") {
+            cout << "Closing the terminal...\n";
             return;
         } 
         else {

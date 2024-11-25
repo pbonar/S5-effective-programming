@@ -106,31 +106,21 @@ double CTree::compute(const vector<double>& values) const {
 }
 
 double CTree::computeHelper(CNode* node, const vector<double>& values) const {
-    if (node == nullptr) {
-        return 0;
-    }
-
+    if (node == nullptr) return 0;
+    
     string value = node->getValue();
 
-    // Jeśli to liczba
-    if (isNumber(value)) {
-        return stod(value);
-    }
+    if (isNumber(value)) return stod(value);
 
-    // Jeśli to zmienna
     if (isVariable(value)) {
-        // Szukamy zmiennej w wektorze 'variables'
         vector<string>::const_iterator it = find(variables.begin(), variables.end(), value);
         if (it != variables.end()) {
-            // Jeśli zmienna została znaleziona, pobieramy jej wartość z 'values'
             size_t index = distance(variables.begin(), it);
             return values[index];
         }
-        // Jeśli zmienna nie została znaleziona, zwracamy 0 (lub można rzucić wyjątek)
-        return 0;
+        else return stod(REPAIR_VALUE);
     }
 
-    // Jeśli to operator
     if (value == "+") {
         return computeHelper(node->getLeft(), values) + computeHelper(node->getRight(), values);
     } else if (value == "-") {
@@ -169,7 +159,8 @@ void CTree::join(string formula) {
         cout << "Tree B is empty, nothing to join.\n";
         return;
     }
-    *this = *this + newTree;
+    CTree new_ctree = *this + newTree;
+    root = new_ctree.root;
     cout << "Modified tree: ";
     printTree();
 }

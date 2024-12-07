@@ -5,6 +5,28 @@
 
 using namespace std;
 
+const string CMD_ENTER = "enter";
+const string CMD_VARS = "vars";
+const string CMD_PRINT = "print";
+const string CMD_COMP = "comp";
+const string CMD_JOIN = "join";
+const string CMD_EXIT = "exit";
+const string CMD_QUIT = "quit";
+const string CMD_CLOSE = "close";
+
+const string MSG_CLOSING = "Closing the terminal...\n";
+const string MSG_UNKNOWN_CMD = "Unknown command: ";
+const string MSG_RESULT = "Result: ";
+const string MSG_FORMULA_TOO_LONG = "Formula too long. Resulting tree: ";
+const string MSG_FAILED_JOIN = "Failed to join trees.\n";
+const string MSG_NO_VARS = "No variables\n";
+const string MSG_NO_LEAF = "No leaf node found";
+const string MSG_FAILED_TO_FIND_PARENTS = "Cant find the leafs parrent\n";
+const string MSG_FIRST_TREE_EMPTY = "First tree is empty, no leafes to connect.\n";
+const string MSG_SECOND_TREE_EMPTY = "Second tree is empty, no leafes to join.\n";
+
+const string PROMPT = "> ";
+
 void trim(string &s) {
     size_t start = s.find_first_not_of(" ");
     size_t end = s.find_last_not_of(" ");
@@ -18,7 +40,7 @@ void trim(string &s) {
 void CParser::processCommands() {
     string line;
     while (true) {
-        cout << "> ";
+        cout << PROMPT;
         getline(cin, line);
         if (line.empty()) continue;
 
@@ -26,19 +48,19 @@ void CParser::processCommands() {
         string command;
         stream >> command;
 
-        if (command == "enter") {
+        if (command == CMD_ENTER) {
             string formula;
             getline(stream, formula);
             trim(formula);
             tree.enter(formula);
         } 
-        else if (command == "vars") {
+        else if (command == CMD_VARS) {
             tree.vars();
         } 
-        else if (command == "print") {
+        else if (command == CMD_PRINT) {
             tree.printTree();
         } 
-        else if (command == "comp") {
+        else if (command == CMD_COMP) {
             string values;
             getline(stream, values);
             trim(values);
@@ -50,21 +72,20 @@ void CParser::processCommands() {
                 nums.push_back(stod(num));
             }
             double result = tree.compute(nums);
-            cout << "Result: " << result << "\n";
-
+            cout << MSG_RESULT << result << "\n";
         } 
-        else if (command == "join") {
+        else if (command == CMD_JOIN) {
             string formula;
             getline(stream, formula);
             trim(formula);
             tree.join(formula);
         } 
-        else if (command == "exit" || command == "quit" || command == "close") {
-            cout << "Closing the terminal...\n";
+        else if (command == CMD_EXIT || command == CMD_QUIT || command == CMD_CLOSE) {
+            cout << MSG_CLOSING;
             return;
         } 
         else {
-            cerr << "Unknown command: " << command << "\n";
+            cerr << MSG_UNKNOWN_CMD << command << endl;
         }
     }
 }

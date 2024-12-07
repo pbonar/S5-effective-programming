@@ -1,6 +1,18 @@
 #include "CNode.h"
 #include <iostream>
 
+const string REPAIR_VALUE = "1";  
+const string ADD_OP = "+";  
+const string SUB_OP = "-";  
+const string MUL_OP = "*";  
+const string DIV_OP = "/";  
+const string SIN_FUNC = "sin";  
+const string COS_FUNC = "cos";  
+const int VALID_EXPRESSION_ARRAY_LENGTH = 6;  
+const string MSG_REPAIR_VALUE = "Value had to be repaired because of disallowed string";
+
+const string VALID_EXPRESSION_ARRAY[] = {ADD_OP, SUB_OP, MUL_OP, DIV_OP, SIN_FUNC, COS_FUNC};
+
 CNode::CNode(string value) : value(value), left(nullptr), right(nullptr) {
     bool is_done = false;
     for (int i = 0; i < VALID_EXPRESSION_ARRAY_LENGTH; i++) {
@@ -12,18 +24,17 @@ CNode::CNode(string value) : value(value), left(nullptr), right(nullptr) {
     }
     if (!is_done) {
         for (int i = 0; i < value.length(); i++) {
-            // cout << value.at(i) << " " << !isdigit(value.at(i)) << " " << value.length() << endl;;
             if (!isdigit(value.at(i))) {
                 type = 2;
                 if (!value.empty() && isalpha(value[0])) {
                 } else {
-                    cout << "Value had to be repaired because of disallowed string" << endl;
+                    cout << MSG_REPAIR_VALUE << endl;
                     value = REPAIR_VALUE;
                 }
                 return;
             }
         }
-        type = 1;;
+        type = 1;
     }
 }
 
@@ -74,7 +85,7 @@ bool CNode::addChild(CNode* child) {
             left = child;
             return true;
         }
-        else if (right == nullptr && value != "sin" && value != "cos") {
+        else if (right == nullptr && value != SIN_FUNC && value != COS_FUNC) {
             right = child;
             return true;
         } else {

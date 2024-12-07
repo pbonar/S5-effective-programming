@@ -5,9 +5,9 @@
 
 using namespace std;
 
-static const string VALID_EXPRESSION_ARRAY[] = {"sin", "cos", "+", "-", "*", "/"};
-static const int VALID_EXPRESSION_ARRAY_LENGTH = 6;
-static const string REPAIR_VALUE = "1";
+// static const string VALID_EXPRESSION_ARRAY[] = {"sin", "cos", "+", "-", "*", "/"};
+// static const int VALID_EXPRESSION_ARRAY_LENGTH = 6;
+// static const string REPAIR_VALUE = "1";
 
 class CNode {
 private:

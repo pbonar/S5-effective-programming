@@ -10,6 +10,28 @@
 
 using namespace std;
 
+// Stałe komunikatów
+const string MSG_FORMULA_TOO_LONG = "Formula too long. Resulting tree: ";
+const string MSG_FINAL_EQUATION = "Final equation: ";
+const string MSG_TOO_MANY_VALUES = "Too many values. Few aren't going to be used.";
+const string MSG_TOO_LITTLE_VALUES = "Too little values. The missing ones will be replaced by 1.";
+const string MSG_NO_VARIABLES = "No variables";
+const string MSG_VARIABLES = "Variables: ";
+const string MSG_TREE_EMPTY = "First tree is empty, no leafes to connect.";
+const string MSG_SECOND_TREE_EMPTY = "Second tree is empty, no leafes to join.";
+const string MSG_MODIFIED_EQUATION = "Modified equation: ";
+const string MSG_FAILED_TO_JOIN = "Failed to join trees.";
+const string MSG_NO_LEAF_FOUND = "No leaf node found.";
+const string MSG_CANT_FIND_PARENT = "Can't find the leaf's parent.";
+
+// Stałe operatorów
+const string OPERATOR_PLUS = "+";
+const string OPERATOR_MINUS = "-";
+const string OPERATOR_MULTIPLY = "*";
+const string OPERATOR_DIVIDE = "/";
+const string OPERATOR_SIN = "sin";
+const string OPERATOR_COS = "cos";
+
 CTree::CTree() : root(nullptr) {}
 
 CTree::CTree(string formula) : root(nullptr) {
@@ -29,7 +51,7 @@ void CTree::deleteTree(CNode* node) {
 }
 
 bool CTree::isOperator(const string& s) const {
-    return (s == "+" || s == "-" || s == "*" || s == "/" || s == "sin" || s == "cos");
+    return (s == OPERATOR_PLUS || s == OPERATOR_MINUS || s == OPERATOR_MULTIPLY || s == OPERATOR_DIVIDE || s == OPERATOR_SIN || s == OPERATOR_COS);
 }
 
 bool CTree::isNumber(const string& s) const {
@@ -61,7 +83,7 @@ void CTree::enter(string formula) {
         }
 
         if (nodeStack.empty()) {
-            cout << "Formula too long. Resulting tree: ";
+            cout << MSG_FORMULA_TOO_LONG;
             printPreorder(root);
             cout << endl;
             return;
@@ -83,7 +105,7 @@ void CTree::enter(string formula) {
         nodeStack.pop();
     }
 
-    cout << "Final equation: ";
+    cout << MSG_FINAL_EQUATION;
     printPreorder(root);
     cout << endl;
 }
@@ -102,8 +124,11 @@ void CTree::printPreorder(CNode* node) const {
 }
 
 double CTree::compute(const vector<double>& values) const {
-    if (values.size() > variables.size()) cout << "Too many values. Few arent going to be used."<< endl;
-    else if (values.size() < variables.size()) cout << "To little values. The missing ones will be replaced by 1." << endl;
+    if (values.size() > variables.size()) 
+        cout << MSG_TOO_MANY_VALUES << endl;
+    else if (values.size() < variables.size()) 
+        cout << MSG_TOO_LITTLE_VALUES << endl;
+    
     return computeHelper(root, values);
 }
 
@@ -123,22 +148,22 @@ double CTree::computeHelper(CNode* node, const vector<double>& values) const {
         return 1;
     }
 
-    if (value == "+") return computeHelper(node->getLeft(), values) + computeHelper(node->getRight(), values);
-    if (value == "-") return computeHelper(node->getLeft(), values) - computeHelper(node->getRight(), values);
-    if (value == "*") return computeHelper(node->getLeft(), values) * computeHelper(node->getRight(), values);
-    if (value == "/") return computeHelper(node->getLeft(), values) / computeHelper(node->getRight(), values);
-    if (value == "sin") return sin(computeHelper(node->getLeft(), values));
-    if (value == "cos") return cos(computeHelper(node->getLeft(), values));
+    if (value == OPERATOR_PLUS) return computeHelper(node->getLeft(), values) + computeHelper(node->getRight(), values);
+    if (value == OPERATOR_MINUS) return computeHelper(node->getLeft(), values) - computeHelper(node->getRight(), values);
+    if (value == OPERATOR_MULTIPLY) return computeHelper(node->getLeft(), values) * computeHelper(node->getRight(), values);
+    if (value == OPERATOR_DIVIDE) return computeHelper(node->getLeft(), values) / computeHelper(node->getRight(), values);
+    if (value == OPERATOR_SIN) return sin(computeHelper(node->getLeft(), values));
+    if (value == OPERATOR_COS) return cos(computeHelper(node->getLeft(), values));
 
     return 1;
 }
 
 void CTree::vars() {
     if (variables.empty()) {
-        cout << "No variables\n";
+        cout << MSG_NO_VARIABLES << endl;
         return;
     }
-    cout << "Variables: ";
+    cout << MSG_VARIABLES;
     for (size_t i = 0; i < variables.size(); ++i) {
         cout << variables[i] << " ";
     }
@@ -148,23 +173,23 @@ void CTree::vars() {
 void CTree::join(string formula) {
     CTree newTree(formula);
     if (!root) {
-        cout << "First tree is empty, no leafes to connect.\n";
+        cout << MSG_TREE_EMPTY << endl;
         return;
     }
     if (!newTree.root) {
-        cout << "Second tree is empty, no leafes to join.\n";
+        cout << MSG_SECOND_TREE_EMPTY << endl;
         return;
     }
 
     CTree new_ctree = *this + newTree;
 
     if (!new_ctree.root) {
-        cout << "Failed to join trees.\n";
+        cout << MSG_FAILED_TO_JOIN << endl;
         return;
     }
 
     *this = new_ctree;
-    cout << "Modified equasion: ";
+    cout << MSG_MODIFIED_EQUATION;
     printTree();
 }
 
@@ -200,7 +225,7 @@ void CTree::replaceLeafWithRoot(CNode* leafNode, CNode* newRoot) {
 
     CNode* parent = findParent(root, leafNode);
     if (!parent) {
-        cout << "Cant find the leafs parrent\n";
+        cout << MSG_CANT_FIND_PARENT << endl;
         return;
     }
 
@@ -238,7 +263,7 @@ CTree CTree::operator+(const CTree& other) const {
             result.variables.erase(remove(result.variables.begin(), result.variables.end(), leafNode->getValue()), result.variables.end());
         }
     } else {
-        cout << "No leaf node found" << endl;
+        cout << MSG_NO_LEAF_FOUND << endl;
     }
 
     result.variables.insert(result.variables.end(), other.variables.begin(), other.variables.end());

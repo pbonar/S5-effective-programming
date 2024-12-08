@@ -1,8 +1,8 @@
 #include <iostream>
 #include "CResult.h"
 #include "CError.h"
-#include "../Lab5-6/CNode.h"
-#include "../Lab5-6/CTree.h"
+#include "CNode.h"
+#include "CTree.h"
 
 using namespace std;
 

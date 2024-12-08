@@ -2,105 +2,111 @@
 #define CRESULT_H
 
 #include <vector>
-#include "CError.h"
+#include <iostream>
+
+using namespace std;
 
 template <typename T, typename E>
 class CResult {
-public:
-    CResult(const T& cValue);
-    CResult(E* pcError);
-    CResult(std::vector<E*>& vErrors);
-    CResult(const CResult<T, E>& cOther);
-    ~CResult();
-    static CResult<T, E> cOk(const T& cValue);
-    static CResult<T, E> cFail(E* pcError);
-    static CResult<T, E> cFail(std::vector<E*>& vErrors);
-    CResult<T, E>& operator=(const CResult<T, E>& cOther);
-    bool bIsSuccess();
-    T cGetValue();
-    std::vector<E*>& vGetErrors();
-
 private:
-    T* pc_value;
-    std::vector<E*> v_errors;
+    T* result_value;
+    std::vector<E> error_list;
+
+public:
+    CResult() : result_value(NULL), error_list() {}
+
+    CResult(const T& value) : result_value(new T(value)), error_list() {}
+
+    CResult(const E& error) : result_value(NULL), error_list(1, error) {} 
+
+    CResult(const std::vector<E>& errors) : result_value(NULL), error_list(errors) {}
+
+    CResult(const CResult<T, E>& other) : result_value(other.result_value ? new T(*other.result_value) : NULL), 
+        error_list(other.error_list) {}
+
+    ~CResult() {
+        // delete result_value;
+    }
+
+    static CResult<T, E> ok(const T& value) {
+        CResult<T, E> result;
+        result.result_value = new T(value);
+        return result;
+    }
+
+    static CResult<T, E> fail(E error) {
+        CResult<T, E> result;
+        result.error_list.push_back(error);
+        return result;
+    }
+
+    static CResult<T, E> fail(const std::vector<E>& errors) {
+        return CResult<T, E>(errors);
+    }
+
+    CResult<T, E>& operator=(const CResult<T, E>& other) {
+        if (this != &other) {
+            delete result_value;
+            result_value = other.result_value ? new T(*other.result_value) : NULL;
+            error_list = other.error_list;
+        }
+        return *this;
+    }
+    
+    CResult<T, E>& operator=(T* other) {
+        result_value = other;
+        return *this;
+    }
+
+    bool isSuccess() const {
+        return result_value != NULL;
+    }
+
+    T getValue() const {
+        if (result_value) {
+            return *result_value;
+        }
+        return T();
+    }
+
+
+    const std::vector<E>& getErrors() const {
+        return error_list;
+    }
+
 };
 
-template <typename T, typename E>
-CResult<T, E>::CResult(const T& cValue) : pc_value(new T(cValue)) {}
+template <typename E>
+class CResult<void, E> {
+private:
+    std::vector<E> error_list;
 
-template <typename T, typename E>
-CResult<T, E>::CResult(E* pcError) : pc_value(nullptr), v_errors(1, pcError) {}
+public:
+    CResult() : error_list() {}
 
-template <typename T, typename E>
-CResult<T, E>::CResult(std::vector<E*>& vErrors) : pc_value(nullptr), v_errors(vErrors) {}
+    CResult(const E& error) : error_list(1, error) {} 
 
-template <typename T, typename E>
-CResult<T, E>::CResult(const CResult<T, E>& cOther) {
-    if (cOther.pc_value) {
-        pc_value = new T(*(cOther.pc_value));
-    } else {
-        pc_value = nullptr;
-    }
-    v_errors = cOther.v_errors;
-}
+    CResult(const std::vector<E>& errors) : error_list(errors) {}
 
-template <typename T, typename E>
-CResult<T, E>::~CResult() {
-    if (pc_value) {
-        delete pc_value;
-    }
-    for (typename std::vector<E*>::iterator it = v_errors.begin(); it != v_errors.end(); ++it) {
-        delete *it;
-    }
-}
+    CResult(const CResult<void, E>& other) : error_list(other.error_list) {}
 
-template <typename T, typename E>
-CResult<T, E> CResult<T, E>::cOk(const T& cValue) {
-    return CResult<T, E>(cValue);
-}
+    ~CResult() {}
 
-template <typename T, typename E>
-CResult<T, E> CResult<T, E>::cFail(E* pcError) {
-    return CResult<T, E>(pcError);
-}
-
-template <typename T, typename E>
-CResult<T, E> CResult<T, E>::cFail(std::vector<E*>& vErrors) {
-    return CResult<T, E>(vErrors);
-}
-
-template <typename T, typename E>
-CResult<T, E>& CResult<T, E>::operator=(const CResult<T, E>& cOther) {
-    if (this != &cOther) {
-        if (pc_value) {
-            delete pc_value;
+    CResult<void, E>& operator=(const CResult<void, E>& other) {
+        if (this != &other) {
+            error_list = other.error_list;
         }
-        for (typename std::vector<E*>::iterator it = v_errors.begin(); it != v_errors.end(); ++it) {
-            delete *it;
-        }
-        if (cOther.pc_value) {
-            pc_value = new T(*(cOther.pc_value));
-        } else {
-            pc_value = nullptr;
-        }
-        v_errors = cOther.v_errors;
+        return *this;
     }
-    return *this;
-}
 
-template <typename T, typename E>
-bool CResult<T, E>::bIsSuccess() {
-    return pc_value != nullptr;
-}
+    bool isSuccess() const {
+        return error_list.empty();
+    }
 
-template <typename T, typename E>
-T CResult<T, E>::cGetValue() {
-    return *pc_value;
-}
+    const std::vector<E>& getErrors() const {
+        return error_list;
+    }
 
-template <typename T, typename E>
-std::vector<E*>& CResult<T, E>::vGetErrors() {
-    return v_errors;
-}
+};
 
 #endif

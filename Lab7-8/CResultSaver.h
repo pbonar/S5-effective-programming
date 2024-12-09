@@ -47,7 +47,7 @@ public:
         } else {
             CTree* tree = result.getValue();
             if (tree != nullptr) {
-                std::ostringstream treeOutput;
+                cout << tree->getTree();
                 outFile << "Tree in prefix notation: " << tree->getTree() << std::endl;
             }
         }

@@ -100,6 +100,12 @@ int main()
             for (size_t i = 0; i < errors.size(); ++i) {
                 cout << " - " << errors[i].getErrorMessage() << endl;
             }
+            CResult<string, CError> saveTreeResult = CResultSaver<CTree*>::saveToFile(TREE_RESULT_FILE, *result2);
+            if (saveTreeResult.isSuccess()) {
+                cout << TREE_SAVE_SUCCESS_MESSAGE << saveTreeResult.getValue() << endl;
+            } else {
+                cout << TREE_SAVE_FAILURE_MESSAGE << saveTreeResult.getErrors()[0].getErrorMessage() << endl;
+            }
         }
 
         delete result2;

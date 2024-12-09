@@ -7,14 +7,16 @@
 #include <algorithm>
 #include "CTree.h"
 #include "CNode.h"
+#include "CResult.h"
+#include "CError.h"
 
 using namespace std;
 
 // Stałe komunikatów
-const string MSG_FORMULA_TOO_LONG = "Formula too long. Resulting tree: ";
+const string MSG_FORMULA_TOO_LONG = "Formula too long. ";
 const string MSG_FINAL_EQUATION = "Final equation: ";
 const string MSG_TOO_MANY_VALUES = "Too many values. Few aren't going to be used.";
-const string MSG_TOO_LITTLE_VALUES = "Too little values. The missing ones will be replaced by 1.";
+const string MSG_TOO_LITTLE_VALUES = "Too little values. ";
 const string MSG_NO_VARIABLES = "No variables";
 const string MSG_VARIABLES = "Variables: ";
 const string MSG_TREE_EMPTY = "First tree is empty, no leafes to connect.";
@@ -39,7 +41,7 @@ CTree::CTree(string formula) : root(nullptr) {
 }
 
 CTree::~CTree() {
-    deleteTree(root);
+    // deleteTree(root);
 }
 
 void CTree::deleteTree(CNode* node) {
@@ -65,10 +67,12 @@ bool CTree::isVariable(const string& s) const {
     return !s.empty() && isalpha(s[0]);
 }
 
-void CTree::enter(string formula) {
+CResult<CTree, CError> CTree::enter(string formula) {
     stringstream ss(formula);
     stack<CNode*> nodeStack;
     string token;
+
+    CResult<CTree, CError> toReturn;
 
     ss >> token;
     root = new CNode(token);
@@ -85,8 +89,8 @@ void CTree::enter(string formula) {
         if (nodeStack.empty()) {
             cout << MSG_FORMULA_TOO_LONG;
             printPreorder(root);
-            cout << endl;
-            return;
+            toReturn = toReturn.fail(MSG_FORMULA_TOO_LONG);
+            return toReturn;
         }
 
         if (isVariable(token)) {
@@ -101,6 +105,8 @@ void CTree::enter(string formula) {
     while (!nodeStack.empty()) {
         while (!nodeStack.top()->isFull()) {
             nodeStack.top()->addChild(new CNode("1"));
+            toReturn = toReturn.fail(MSG_TOO_LITTLE_VALUES);
+            return toReturn;
         }
         nodeStack.pop();
     }
@@ -108,6 +114,7 @@ void CTree::enter(string formula) {
     cout << MSG_FINAL_EQUATION;
     printPreorder(root);
     cout << endl;
+    return toReturn.ok(*this);
 }
 
 void CTree::printTree() const {

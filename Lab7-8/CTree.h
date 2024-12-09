@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include "CNode.h"
+#include "CResult.h"
+#include "CError.h"
 
 using namespace std;
 
@@ -30,9 +32,11 @@ public:
     CTree(string formula);
     ~CTree();
 
+    CResult<CTree, CError> create(string formula);
+
     void printTree() const;
 
-    void enter(string formula);
+    CResult<CTree, CError> enter(string formula);
     double compute(const vector<double>& values) const;
     void vars();
     void join(string formula);

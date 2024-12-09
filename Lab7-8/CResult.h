@@ -25,7 +25,7 @@ public:
         error_list(other.error_list) {}
 
     ~CResult() {
-        // delete result_value;
+        delete result_value;
     }
 
     static CResult<T, E> ok(const T& value) {
@@ -37,6 +37,7 @@ public:
     static CResult<T, E> fail(E error) {
         CResult<T, E> result;
         result.error_list.push_back(error);
+        cout << "ERROR" << result.error_list.size() <<endl;
         return result;
     }
 

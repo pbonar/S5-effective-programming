@@ -55,17 +55,18 @@ int main()
             break;
         }
 
-        cout << "lollo" << endl;
-        CTree* tree = new CTree(formula);
-        CResult<CTree, CError> result2 = *tree;
-        cout << "lollo" << endl;
-
-        if (result2.isSuccess()) {
+        CTree* tree = nullptr;
+        CResult<CTree, CError>* result2 = new CResult<CTree, CError>();
+        *result2 = CTree().enter(formula);
+        
+        if (result2->isSuccess()) {
             std::cout << "\nTree successfully created! Here's the pre-order traversal:\n";
-            result2.getValue().printTree();
+            result2->getValue().printTree();
         } else {
             std::cout << "\nError: Failed to create the tree. Details:\n";
-            const std::vector<CError>& errors = result2.getErrors();
+            const std::vector<CError>& errors = result2->getErrors();
+            cout << "Number of fails: " << errors.size() << endl;
+                        result2->getValue().printTree();
             for (size_t i = 0; i < errors.size(); ++i) {
                 std::cout << " - " << errors[i].getErrorMessage() << std::endl;
             }

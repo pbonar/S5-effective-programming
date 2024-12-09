@@ -72,8 +72,6 @@ CResult<CTree*, CError> CTree::enter(string formula) {
     stack<CNode*> nodeStack;
     string token;
 
-    CResult<CTree*, CError> toReturn;
-
     ss >> token;
     root = new CNode(token);
     variables.clear();
@@ -89,8 +87,7 @@ CResult<CTree*, CError> CTree::enter(string formula) {
         if (nodeStack.empty()) {
             cout << MSG_FORMULA_TOO_LONG;
             printPreorder(root);
-            toReturn = toReturn.fail(MSG_FORMULA_TOO_LONG);
-            return toReturn;
+            return CResult<CTree*, CError>().fail(MSG_FORMULA_TOO_LONG);
         }
 
         if (isVariable(token)) {
@@ -105,8 +102,7 @@ CResult<CTree*, CError> CTree::enter(string formula) {
     while (!nodeStack.empty()) {
         while (!nodeStack.top()->isFull()) {
             nodeStack.top()->addChild(new CNode("1"));
-            toReturn = toReturn.fail(MSG_TOO_LITTLE_VALUES);
-            return toReturn;
+            return CResult<CTree*, CError>().fail(MSG_TOO_LITTLE_VALUES);
         }
         nodeStack.pop();
     }
@@ -114,7 +110,7 @@ CResult<CTree*, CError> CTree::enter(string formula) {
     cout << MSG_FINAL_EQUATION;
     printPreorder(root);
     cout << endl;
-    return toReturn.ok(this);
+    return CResult<CTree*, CError>().ok(this);
 }
 
 void CTree::printTree() const {

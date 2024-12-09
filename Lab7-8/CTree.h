@@ -19,6 +19,7 @@ private:
     bool isVariable(const string& s) const;
 
     void printPreorder(CNode* node) const;
+    string getPreorder(CNode* node);
     double computeHelper(CNode* node, const vector<double>& values) const;
     CNode* copyTree(CNode* node) const;
     CNode* findLeaf(CNode* node) const;
@@ -32,11 +33,10 @@ public:
     CTree(string formula);
     ~CTree();
 
-    CResult<CTree, CError> create(string formula);
-
     void printTree() const;
+    string getTree();
 
-    CResult<CTree, CError> enter(string formula);
+    CResult<CTree*, CError> enter(string formula);
     double compute(const vector<double>& values) const;
     void vars();
     void join(string formula);

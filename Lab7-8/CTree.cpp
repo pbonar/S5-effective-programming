@@ -41,7 +41,7 @@ CTree::CTree(string formula) : root(nullptr) {
 }
 
 CTree::~CTree() {
-    // deleteTree(root);
+    deleteTree(root);
 }
 
 void CTree::deleteTree(CNode* node) {
@@ -67,12 +67,12 @@ bool CTree::isVariable(const string& s) const {
     return !s.empty() && isalpha(s[0]);
 }
 
-CResult<CTree, CError> CTree::enter(string formula) {
+CResult<CTree*, CError> CTree::enter(string formula) {
     stringstream ss(formula);
     stack<CNode*> nodeStack;
     string token;
 
-    CResult<CTree, CError> toReturn;
+    CResult<CTree*, CError> toReturn;
 
     ss >> token;
     root = new CNode(token);
@@ -114,7 +114,7 @@ CResult<CTree, CError> CTree::enter(string formula) {
     cout << MSG_FINAL_EQUATION;
     printPreorder(root);
     cout << endl;
-    return toReturn.ok(*this);
+    return toReturn.ok(this);
 }
 
 void CTree::printTree() const {
@@ -129,6 +129,21 @@ void CTree::printPreorder(CNode* node) const {
         printPreorder(node->getRight());
     }
 }
+
+string CTree::getTree() {
+    return getPreorder(root);
+}
+
+string CTree::getPreorder(CNode* node) {
+    if (node) {
+        string toReturn = node->getValue() + " ";
+        toReturn += getPreorder(node->getLeft());
+        toReturn += getPreorder(node->getRight());
+        return toReturn;
+    }
+    return "";
+}
+
 
 double CTree::compute(const vector<double>& values) const {
     if (values.size() > variables.size()) 

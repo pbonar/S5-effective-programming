@@ -14,17 +14,17 @@ using namespace std;
 
 // Stałe komunikatów
 const string MSG_FORMULA_TOO_LONG = "Formula too long. ";
-const string MSG_FINAL_EQUATION = "Final equation: ";
-const string MSG_TOO_MANY_VALUES = "Too many values. Few aren't going to be used.";
+// const string MSG_FINAL_EQUATION = "Final equation: ";
+// const string MSG_TOO_MANY_VALUES = "Too many values. Few aren't going to be used.";
 const string MSG_TOO_LITTLE_VALUES = "Too little values. ";
 const string MSG_NO_VARIABLES = "No variables";
 const string MSG_VARIABLES = "Variables: ";
-const string MSG_TREE_EMPTY = "First tree is empty, no leafes to connect.";
-const string MSG_SECOND_TREE_EMPTY = "Second tree is empty, no leafes to join.";
-const string MSG_MODIFIED_EQUATION = "Modified equation: ";
-const string MSG_FAILED_TO_JOIN = "Failed to join trees.";
-const string MSG_NO_LEAF_FOUND = "No leaf node found.";
-const string MSG_CANT_FIND_PARENT = "Can't find the leaf's parent.";
+// const string MSG_TREE_EMPTY = "First tree is empty, no leafes to connect.";
+// const string MSG_SECOND_TREE_EMPTY = "Second tree is empty, no leafes to join.";
+// const string MSG_MODIFIED_EQUATION = "Modified equation: ";
+// const string MSG_FAILED_TO_JOIN = "Failed to join trees.";
+// const string MSG_NO_LEAF_FOUND = "No leaf node found.";
+// const string MSG_CANT_FIND_PARENT = "Can't find the leaf's parent.";
 
 // Stałe operatorów
 const string OPERATOR_PLUS = "+";
@@ -93,8 +93,8 @@ CResult<CTree*, CError> CTree::enter(string formula) {
         }
 
         if (nodeStack.empty()) {
-            cout << MSG_FORMULA_TOO_LONG;
-            printPreorder(root);
+            // cout << MSG_FORMULA_TOO_LONG;
+            // printPreorder(root);
             return CResult<CTree*, CError>().fail(MSG_FORMULA_TOO_LONG);
         }
 
@@ -115,9 +115,9 @@ CResult<CTree*, CError> CTree::enter(string formula) {
         nodeStack.pop();
     }
 
-    cout << MSG_FINAL_EQUATION;
-    printPreorder(root);
-    cout << endl;
+    // cout << MSG_FINAL_EQUATION;
+    // printPreorder(root);
+    // cout << endl;
     return CResult<CTree*, CError>().ok(this);
 }
 
@@ -150,10 +150,10 @@ string CTree::getPreorder(CNode* node) {
 
 
 double CTree::compute(const vector<double>& values) const {
-    if (values.size() > variables.size()) 
-        cout << MSG_TOO_MANY_VALUES << endl;
-    else if (values.size() < variables.size()) 
-        cout << MSG_TOO_LITTLE_VALUES << endl;
+    // if (values.size() > variables.size()) 
+    //     cout << MSG_TOO_MANY_VALUES << endl;
+    // else if (values.size() < variables.size()) 
+    //     cout << MSG_TOO_LITTLE_VALUES << endl;
     
     return computeHelper(root, values);
 }
@@ -199,23 +199,23 @@ void CTree::vars() {
 void CTree::join(string formula) {
     CTree newTree(formula);
     if (!root) {
-        cout << MSG_TREE_EMPTY << endl;
+        // cout << MSG_TREE_EMPTY << endl;
         return;
     }
     if (!newTree.root) {
-        cout << MSG_SECOND_TREE_EMPTY << endl;
+        // cout << MSG_SECOND_TREE_EMPTY << endl;
         return;
     }
 
     CTree new_ctree = *this + newTree;
 
     if (!new_ctree.root) {
-        cout << MSG_FAILED_TO_JOIN << endl;
+        // cout << MSG_FAILED_TO_JOIN << endl;
         return;
     }
 
     *this = new_ctree;
-    cout << MSG_MODIFIED_EQUATION;
+    // cout << MSG_MODIFIED_EQUATION;
     printTree();
 }
 
@@ -251,7 +251,7 @@ void CTree::replaceLeafWithRoot(CNode* leafNode, CNode* newRoot) {
 
     CNode* parent = findParent(root, leafNode);
     if (!parent) {
-        cout << MSG_CANT_FIND_PARENT << endl;
+        // cout << MSG_CANT_FIND_PARENT << endl;
         return;
     }
 
@@ -289,7 +289,7 @@ CTree CTree::operator+(const CTree& other) const {
             result.variables.erase(remove(result.variables.begin(), result.variables.end(), leafNode->getValue()), result.variables.end());
         }
     } else {
-        cout << MSG_NO_LEAF_FOUND << endl;
+        // cout << MSG_NO_LEAF_FOUND << endl;
     }
 
     result.variables.insert(result.variables.end(), other.variables.begin(), other.variables.end());

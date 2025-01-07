@@ -8,20 +8,20 @@
 
 int main() {
     CTree tree1 = CTree("/ 1 2");
-    CTree tree2 = CTree("/ 4 3");
-    // Dodawanie przykładowych wartości do drzewa 1 i 2
-    // (implementacja metod dodających węzły zależy od szczegółów klasy)
 
-    // Test operatora przypisania przenoszącego
+    CTree tree2 = CTree("/ 4 3");
+
     CTree tree3 = std::move(tree1);
 
-    // Test operatora +
     CTree tree4 = tree2 + tree3;
 
-    // Wyświetlenie zmiennych drzewa wynikowego
+    cout << "Tree1:   ";
     tree1.printTree();
+    cout << "Tree2:   ";
     tree2.printTree();
+    cout << "Tree3:   ";
     tree3.printTree();
+    cout << "Tree4:   ";
     tree4.printTree();
 
     return 0;

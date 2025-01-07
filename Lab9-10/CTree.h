@@ -31,6 +31,9 @@ private:
 public:
     CTree();
     CTree(string formula);
+    CTree(CTree&& other); 
+    CTree(const CTree& other);
+
     ~CTree();
 
     void printTree() const;
@@ -43,6 +46,7 @@ public:
 
     CTree operator+(const CTree& other) const;
     CTree& operator=(const CTree& other);
+    CTree& operator=(CTree&& other);
 };
 
 #endif

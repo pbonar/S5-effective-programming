@@ -40,6 +40,14 @@ CTree::CTree(string formula) : root(nullptr) {
     enter(formula);
 }
 
+CTree::CTree(const CTree& other) : root(nullptr), variables(other.variables) {
+    root = copyTree(other.root);
+}
+
+CTree::CTree(CTree&& other) : root(other.root), variables(std::move(other.variables)) {
+    other.root = nullptr;
+}
+
 CTree::~CTree() {
     deleteTree(root);
 }
@@ -300,3 +308,15 @@ CTree& CTree::operator=(const CTree& other) {
     }
     return *this;
 }
+
+CTree& CTree::operator=(CTree&& other) {
+    if (this != &other) {
+        deleteTree(root);
+        root = other.root;
+        variables = std::move(other.variables);
+        other.root = nullptr;
+        other.variables.clear();
+    }
+    return *this;
+}
+

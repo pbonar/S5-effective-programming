@@ -37,7 +37,7 @@ public:
     static CResult<T, E> fail(E error) {
         CResult<T, E> result;
         result.error_list.push_back(error);
-        cout << "ERROR" << result.error_list.size() <<endl;
+        // cout << "ERROR" << result.error_list.size() <<endl;
         return result;
     }
 

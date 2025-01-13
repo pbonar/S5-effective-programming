@@ -28,7 +28,7 @@ CNode::CNode(string value) : value(value), left(nullptr), right(nullptr) {
                 type = 2;
                 if (!value.empty() && isalpha(value[0])) {
                 } else {
-                    cout << MSG_REPAIR_VALUE << endl;
+                    // cout << MSG_REPAIR_VALUE << endl;
                     value = REPAIR_VALUE;
                 }
                 return;

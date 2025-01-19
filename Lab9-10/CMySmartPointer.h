@@ -22,22 +22,18 @@ public:
         pc_counter->iAdd();
     }
 
-    // Konstruktor kopiujący
     CMySmartPointer(const CMySmartPointer &pcOther)
         : pc_pointer(pcOther.pc_pointer), pc_counter(pcOther.pc_counter) {
         pc_counter->iAdd();
     }
 
-    // Operator przypisania
     CMySmartPointer& operator=(const CMySmartPointer &pcOther) {
         if (this != &pcOther) {
-            // Zmniejszenie licznika referencji dla bieżącego obiektu
             if (pc_counter->iDec() == 0) {
                 delete pc_pointer;
                 delete pc_counter;
             }
 
-            // Przypisanie nowych wartości
             pc_pointer = pcOther.pc_pointer;
             pc_counter = pcOther.pc_counter;
             pc_counter->iAdd();
@@ -45,7 +41,6 @@ public:
         return *this;
     }
 
-    // Destruktor
     ~CMySmartPointer() {
         if (pc_counter->iDec() == 0) {
             delete pc_pointer;
@@ -53,7 +48,6 @@ public:
         }
     }
 
-    // Operatory dereferencji
     T& operator*() { return *pc_pointer; }
     T* operator->() { return pc_pointer; }
 

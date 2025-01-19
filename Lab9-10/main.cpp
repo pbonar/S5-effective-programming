@@ -29,25 +29,19 @@ int main() {
     
 
     cout << "=== CMySmartPointer TEST ===" << endl;
-    // Tworzenie inteligentnego wskaźnika do std::string
     CMySmartPointer<std::string> sp1(new std::string("Hello, World!"));
     std::cout << "Initial value (sp1): " << *sp1 << std::endl;
 
-    // Konstruktor kopiujący
     CMySmartPointer<std::string> sp2 = sp1;
     std::cout << "Value after copy (sp2): " << *sp2 << std::endl;
 
-    // Modyfikacja przez jeden wskaźnik
     *sp2 = "Modified String!";
     std::cout << "Modified value (sp1): " << *sp1 << std::endl;
     std::cout << "Modified value (sp2): " << *sp2 << std::endl;
 
-    // Operator przypisania
     CMySmartPointer<std::string> sp3(new std::string("Another String"));
     std::cout << "Initial value (sp3): " << *sp3 << std::endl;
     sp3 = sp1;
     std::cout << "Value after assignment (sp3): " << *sp3 << std::endl;
-
-    return 0;
     return 0;
 }

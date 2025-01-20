@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <list>
-#include <sstream> // Dla std::ostringstream
+#include <sstream>
 
 class CRefCounter {
 public:
@@ -15,6 +15,9 @@ public:
 private:
     int i_count;
 };
+
+
+
 
 template <typename T>
 class CMySmartPointer {
@@ -41,9 +44,12 @@ public:
 
             pc_pointer = pcOther.pc_pointer;
             pc_counter = pcOther.pc_counter;
+
+            for (typename list<CMySmartPointer*>::iterator it = related_pointers->begin(); it != related_pointers->end(); it++) {
+                pc_counter->iAdd();
+                pcOther.related_pointers->push_back(*it);
+            }
             related_pointers = pcOther.related_pointers;
-            pc_counter->iAdd();
-            related_pointers->push_back(this);
         }
         return *this;
     }

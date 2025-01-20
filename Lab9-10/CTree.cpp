@@ -12,13 +12,11 @@
 
 using namespace std;
 
-// Stałe komunikatów
 const string MSG_FORMULA_TOO_LONG = "Formula too long. ";
 const string MSG_TOO_LITTLE_VALUES = "Too little values. ";
 const string MSG_NO_VARIABLES = "No variables";
 const string MSG_VARIABLES = "Variables: ";
 
-// Stałe operatorów
 const string OPERATOR_PLUS = "+";
 const string OPERATOR_MINUS = "-";
 const string OPERATOR_MULTIPLY = "*";

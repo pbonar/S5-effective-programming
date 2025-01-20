@@ -29,19 +29,23 @@ int main() {
     
 
     cout << "=== CMySmartPointer TEST ===" << endl;
-    CMySmartPointer<std::string> sp1(new std::string("Hello, World!"));
-    std::cout << "Initial value (sp1): " << *sp1 << std::endl;
+    CMySmartPointer<string> sp1(new string("Hello, World!"));
+    cout << "Initial value (sp1): " << *sp1 << endl;
+    cout << "Related pointers : " << sp1.printRelatedPointers() << endl;
 
-    CMySmartPointer<std::string> sp2 = sp1;
-    std::cout << "Value after copy (sp2): " << *sp2 << std::endl;
+    CMySmartPointer<string> sp2 = sp1;
+    cout << "Value after copy (sp2): " << *sp2 << endl;
+    cout << "Related pointers : " << sp1.printRelatedPointers() << endl;
 
     *sp2 = "Modified String!";
-    std::cout << "Modified value (sp1): " << *sp1 << std::endl;
-    std::cout << "Modified value (sp2): " << *sp2 << std::endl;
+    cout << "Modified value (sp1): " << *sp1 << endl;
+    cout << "Modified value (sp2): " << *sp2 << endl;
 
-    CMySmartPointer<std::string> sp3(new std::string("Another String"));
-    std::cout << "Initial value (sp3): " << *sp3 << std::endl;
+    CMySmartPointer<string> sp3(new string("Another String"));
+    cout << "Related pointers : " << sp1.printRelatedPointers() << endl;
+    cout << "Initial value (sp3): " << *sp3 << endl;
     sp3 = sp1;
-    std::cout << "Value after assignment (sp3): " << *sp3 << std::endl;
+    cout << "Value after assignment (sp3): " << *sp3 << endl;
+    cout << "Related pointers : " << sp1.printRelatedPointers() << endl;
     return 0;
 }

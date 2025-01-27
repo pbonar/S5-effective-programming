@@ -1,41 +1,33 @@
 #include "Optimizer.h"
+#include <iostream>
+#include <limits>
 
 using namespace NGroupingChallenge;
 
-COptimizer::COptimizer(CGroupingEvaluator& cEvaluator)
-	: c_evaluator(cEvaluator)
-{
-	random_device c_seed_generator;
-	c_random_engine.seed(c_seed_generator());
+COptimizer::COptimizer(CGroupingEvaluator& cEvaluator, size_t popSize, double crossProb, double mutProb, size_t maxIterations)
+    : c_evaluator(cEvaluator),
+      c_genetic_algo(cEvaluator, popSize, crossProb, mutProb, maxIterations),
+      d_current_best_fitness(std::numeric_limits<double>::max()) {
 }
 
-void COptimizer::vInitialize()
-{
-	numeric_limits<double> c_double_limits;
-	d_current_best_fitness = c_double_limits.max();
+void COptimizer::vInitialize() {
+    c_genetic_algo.initializePopulation();
 
-	v_current_best.clear();
-	v_current_best.resize(c_evaluator.iGetNumberOfPoints());
+    d_current_best_fitness = std::numeric_limits<double>::max();
+    v_current_best.clear();
+    v_current_best.resize(c_evaluator.iGetNumberOfPoints());
 }
 
-void COptimizer::vRunIteration()
-{
-	vector<int> v_candidate(c_evaluator.iGetNumberOfPoints());
+void COptimizer::vRunOptimization() {
+    c_genetic_algo.run();
 
-	uniform_int_distribution<int> c_candidate_distribution(c_evaluator.iGetLowerBound(), c_evaluator.iGetUpperBound());
+    const CIndividual& best_individual = c_genetic_algo.getBestIndividual();
+    v_current_best = best_individual.getGenotypes();
+    d_current_best_fitness = best_individual.getFitness();
 
-	for (size_t i = 0; i < v_candidate.size(); i++)
-	{
-		v_candidate[i] = c_candidate_distribution(c_random_engine);
-	}
+    vDisplayBestSolution();
+}
 
-	double d_candidate_fitness = c_evaluator.dEvaluate(v_candidate);
-
-	if (d_candidate_fitness < d_current_best_fitness)
-	{
-		v_current_best = v_candidate;
-		d_current_best_fitness = d_candidate_fitness;
-	}
-
-	cout << d_current_best_fitness << endl;
+void COptimizer::vDisplayBestSolution() {
+    std::cout << c_genetic_algo.toString();
 }

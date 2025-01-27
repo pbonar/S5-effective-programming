@@ -4,12 +4,12 @@
 
 
 // Parametry algorytmu genetycznego
-static int numberOfGroups = 3;
-static int numberOfPoints = 5;
+static int numberOfGroups = 4;
+static int numberOfPoints = 30;
 static size_t popSize = 10;
 static double crossProb = 0.7;
 static double mutProb = 0.1;
-static size_t maxIterations = 5;
+static size_t maxIterations = 100;
 
 
 

@@ -11,17 +11,17 @@ namespace NGroupingChallenge {
     public:
         COptimizer(CGroupingEvaluator& cEvaluator, size_t popSize, double crossProb, double mutProb, size_t maxIterations);
 
-        void vInitialize();       // Inicjalizacja algorytmu genetycznego
-        void vRunOptimization(); // Uruchomienie pełnej optymalizacji
+        void vInitialize();
+        void vRunOptimization();
 
     private:
-        CGroupingEvaluator& c_evaluator;  // Referencja do klasy oceniającej
-        CGeneticAlgorithm c_genetic_algo; // Instancja algorytmu genetycznego
+        CGroupingEvaluator& c_evaluator;
+        CGeneticAlgorithm c_genetic_algo;
 
-        double d_current_best_fitness;    // Najlepsza wartość przystosowania
-        std::vector<int> v_current_best;  // Najlepsze rozwiązanie genotypowe
+        double d_current_best_fitness;
+        std::vector<int> v_current_best;
 
-        void vDisplayBestSolution();      // Wyświetlanie najlepszego rozwiązania
+        void vDisplayBestSolution();
     };
 }
 

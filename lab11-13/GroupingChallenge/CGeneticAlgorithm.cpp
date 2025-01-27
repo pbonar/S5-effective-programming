@@ -1,6 +1,6 @@
 #include "CGeneticAlgorithm.h"
 #include <algorithm>
-#include <sstream> // Do formatowania tekstu
+#include <sstream>
 
 namespace NGroupingChallenge {
 
@@ -29,36 +29,34 @@ void CGeneticAlgorithm::initializePopulation() {
     updateBestIndividual();
 }
 
-void CGeneticAlgorithm::run() {
-    for (int generation = 0; generation < maxGenerations_; ++generation) {
-        std::vector<CIndividual> nextGeneration;
+void CGeneticAlgorithm::runOneGeneration() {
+    std::vector<CIndividual> nextGeneration;
 
-        while (nextGeneration.size() < populationSize_) {
-            CIndividual& parent1 = selectParent();
-            CIndividual& parent2 = selectParent();
+    while (nextGeneration.size() < populationSize_) {
+        CIndividual& parent1 = selectParent();
+        CIndividual& parent2 = selectParent();
 
-            std::uniform_real_distribution<double> probDist(0.0, 1.0);
-            if (probDist(randomEngine_) < crossoverProbability_) {
-                auto [child1, child2] = parent1.crossover(parent2, randomEngine_);
-                nextGeneration.push_back(child1);
-                if (nextGeneration.size() < populationSize_) {
-                    nextGeneration.push_back(child2);
-                }
-            } else {
-                nextGeneration.push_back(parent1);
-                if (nextGeneration.size() < populationSize_) {
-                    nextGeneration.push_back(parent2);
-                }
+        std::uniform_real_distribution<double> probDist(0.0, 1.0);
+        if (probDist(randomEngine_) < crossoverProbability_) {
+            auto [child1, child2] = parent1.crossover(parent2, randomEngine_);
+            nextGeneration.push_back(child1);
+            if (nextGeneration.size() < populationSize_) {
+                nextGeneration.push_back(child2);
+            }
+        } else {
+            nextGeneration.push_back(parent1);
+            if (nextGeneration.size() < populationSize_) {
+                nextGeneration.push_back(parent2);
             }
         }
-
-        for (CIndividual& individual : nextGeneration) {
-            individual.mutate(mutationProbability_, randomEngine_);
-        }
-
-        population_ = std::move(nextGeneration);
-        updateBestIndividual();
     }
+
+    for (CIndividual& individual : nextGeneration) {
+        individual.mutate(mutationProbability_, randomEngine_);
+    }
+
+    population_ = std::move(nextGeneration);
+    updateBestIndividual();
 }
 
 const CIndividual& CGeneticAlgorithm::getBestIndividual() const {
@@ -85,7 +83,6 @@ void CGeneticAlgorithm::updateBestIndividual() {
 std::string CGeneticAlgorithm::toString() const {
     std::ostringstream oss;
 
-    // Informacje o stanie algorytmu
     oss << "Genetic Algorithm State:\n";
     oss << "Population Size: " << populationSize_ << "\n";
     oss << "Crossover Probability: " << crossoverProbability_ << "\n";
@@ -93,7 +90,6 @@ std::string CGeneticAlgorithm::toString() const {
     oss << "Max Generations: " << maxGenerations_ << "\n";
     oss << "Best Fitness: " << bestIndividual_.getFitness() << "\n";
 
-    // Informacje o populacji (każda linia to jeden osobnik)
     oss << "Current Population:\n";
     for (size_t i = 0; i < population_.size(); ++i) {
         oss << " - Individual " << i + 1 << " (Fitness: " << population_[i].getFitness() << "): ";
@@ -105,5 +101,24 @@ std::string CGeneticAlgorithm::toString() const {
 
     return oss.str();
 }
+
+std::string CGeneticAlgorithm::toStringShort() const {
+    std::ostringstream oss;
+
+    oss << "Genetic Algorithm State:\n";
+    oss << "Best Fitness: " << bestIndividual_.getFitness() << "\n";
+
+    oss << "Current Population:\n";
+    for (size_t i = 0; i < population_.size(); ++i) {
+        oss << " - Individual " << i + 1 << " (Fitness: " << population_[i].getFitness() << "): ";
+        for (int gene : population_[i].getGenotypes()) {
+            oss << gene << " ";
+        }
+        oss << "\n";
+    }
+
+    return oss.str();
+}
+
 
 }

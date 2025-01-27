@@ -5,7 +5,7 @@
 #include "CIndividual.h"
 #include <vector>
 #include <random>
-#include <string> // Dodano, aby użyć std::string
+#include <string>
 
 namespace NGroupingChallenge {
 
@@ -13,16 +13,16 @@ class CGeneticAlgorithm {
 public:
     CGeneticAlgorithm(CGroupingEvaluator& evaluator, int populationSize, double crossoverProbability, double mutationProbability, int maxGenerations);
 
-    void initializePopulation();
-    void run();
-    const CIndividual& getBestIndividual() const;
-
-    // Dodano metodę toString
+    void initializePopulation();      // Inicjalizuje populację
+    void runOneGeneration();          // Wykonuje jedną generację
+    const CIndividual& getBestIndividual() const; // Zwraca najlepszy osobnik
+    int getMaxGenerations() const { return maxGenerations_; } // Zwraca liczbę generacji
     std::string toString() const;
+    std::string toStringShort() const;       // Zwraca szczegóły algorytmu jako string
 
 private:
-    CIndividual& selectParent();
-    void updateBestIndividual();
+    CIndividual& selectParent();      // Wybór rodzica
+    void updateBestIndividual();      // Aktualizacja najlepszego osobnika
 
     std::vector<CIndividual> population_;
     CIndividual bestIndividual_;

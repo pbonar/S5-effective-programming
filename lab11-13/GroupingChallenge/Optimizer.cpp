@@ -19,7 +19,12 @@ void COptimizer::vInitialize() {
 }
 
 void COptimizer::vRunOptimization() {
-    c_genetic_algo.run();
+    for (size_t generation = 0; generation < c_genetic_algo.getMaxGenerations(); ++generation) {
+        c_genetic_algo.runOneGeneration();
+
+        std::cout << "Generation: " << generation + 1 << std::endl;
+        std::cout << c_genetic_algo.toStringShort() << endl;
+    }
 
     const CIndividual& best_individual = c_genetic_algo.getBestIndividual();
     v_current_best = best_individual.getGenotypes();
@@ -29,5 +34,10 @@ void COptimizer::vRunOptimization() {
 }
 
 void COptimizer::vDisplayBestSolution() {
-    std::cout << c_genetic_algo.toString();
+    std::cout << "Best solution fitness: " << d_current_best_fitness << std::endl;
+    std::cout << "Best genotype: ";
+    for (int gene : v_current_best) {
+        std::cout << gene << " ";
+    }
+    std::cout << std::endl;
 }

@@ -53,6 +53,7 @@ void CGeneticAlgorithm::runOneGeneration() {
 
     for (CIndividual& individual : nextGeneration) {
         individual.mutate(mutationProbability_, randomEngine_);
+        individual.deterministicMutate(population_, randomEngine_);
     }
 
     population_ = std::move(nextGeneration);
@@ -65,9 +66,9 @@ const CIndividual& CGeneticAlgorithm::getBestIndividual() const {
 
 CIndividual& CGeneticAlgorithm::selectParent() {
     std::uniform_int_distribution<int> indexDist(0, population_.size() - 1);
-    int idx1 = indexDist(randomEngine_);
-    int idx2 = indexDist(randomEngine_);
-    return (population_[idx1].getFitness() < population_[idx2].getFitness()) ? population_[idx1] : population_[idx2];
+    int id1 = indexDist(randomEngine_);
+    int id2 = indexDist(randomEngine_);
+    return (population_[id1].getFitness() < population_[id2].getFitness()) ? population_[id1] : population_[id2];
 }
 
 void CGeneticAlgorithm::updateBestIndividual() {

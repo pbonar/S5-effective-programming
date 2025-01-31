@@ -1,17 +1,13 @@
 #include "Optimizer.h"
 #include "GaussianGroupingEvaluatorFactory.h"
 
-
-
 // Parametry algorytmu genetycznego
 static int numberOfGroups = 4;
-static int numberOfPoints = 30;
+static int numberOfPoints = 10;
 static size_t popSize = 10;
 static double crossProb = 0.7;
 static double mutProb = 0.1;
-static size_t maxIterations = 100;
-
-
+static size_t maxIterations = 1;
 
 int main() {
     NGroupingChallenge::CGaussianGroupingEvaluatorFactory factory(numberOfGroups, numberOfPoints);

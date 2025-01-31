@@ -22,8 +22,8 @@ void COptimizer::vRunOptimization() {
     for (size_t generation = 0; generation < c_genetic_algo.getMaxGenerations(); ++generation) {
         c_genetic_algo.runOneGeneration();
 
-        std::cout << "Generation: " << generation + 1 << std::endl;
-        std::cout << c_genetic_algo.toStringShort() << endl;
+        // std::cout << "Generation: " << generation + 1 << std::endl;
+        // std::cout << c_genetic_algo.toStringShort() << endl;
     }
 
     const CIndividual& best_individual = c_genetic_algo.getBestIndividual();
